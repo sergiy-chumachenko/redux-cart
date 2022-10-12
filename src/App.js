@@ -4,7 +4,7 @@ import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import Notification from "./components/UI/Notification";
 import {Fragment, useEffect} from "react";
-import {sendCardData} from "./store/cart-slice";
+import {fetchCartData, sendCardData} from "./store/cart-actions";
 
 let isInitial = true;
 
@@ -13,7 +13,9 @@ function App() {
     const showCart = useSelector(state => state.ui.cartIsVisible);
     const cart = useSelector(state => state.cart);
     const notification = useSelector(state => state.ui.notification);
-
+    useEffect(() => {
+        dispatch(fetchCartData());
+    }, [dispatch])
     useEffect(() => {
         // const sendCartData = async () => {
         // dispatch(uiActions.showNotification({
@@ -45,8 +47,9 @@ function App() {
         //         message: 'Sent cart data failed!'
         //     }));
         // });
-        dispatch(sendCardData(cart));
-
+        if (cart.changed) {
+            dispatch(sendCardData(cart));
+        }
     }, [cart, dispatch]);
 
     return (
